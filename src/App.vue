@@ -23,11 +23,15 @@ import Home from "./components/Home.vue";
   @apply bg-blue-700 text-white p-4 rounded-md border duration-300 hover:bg-blue-800;
 }
 
+.form-wrapper {
+  @apply flex flex-col space-y-2 md:space-y-4 max-w-md w-full mx-auto;
+}
+
 .form-group {
-  @apply flex flex-col space-y-2;
+  @apply w-full flex justify-center flex-col space-y-2;
 }
 
 .form-control {
-  @apply border-2 border-gray-300 text-blue-500 focus:ring-2 focus:ring-blue-700 rounded-md py-2 px-4;
+  @apply border-2 w-full border-gray-300 text-blue-500 focus:ring-2 focus:ring-blue-700 rounded-md py-2 px-4;
 }
 </style>

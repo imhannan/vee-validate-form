@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive } from "vue";
+import FormError from "./utils/FormError.vue";
 
 const form = reactive({
   name: "",
@@ -22,96 +23,128 @@ const handleSubmit = () => {
     <h1 class="text-center text-2xl font-bold">Registration Form</h1>
     <VForm
       @submit="handleSubmit"
-      class="flex flex-col space-y-4 max-w-lg mx-auto"
+      class="form-wrapper"
+      v-slot="{ meta, isSubmitting }"
     >
       <div class="form-group">
         <label for="name">Name</label>
         <VField
           name="name"
-          type="text"
-          class="form-control"
-          id="name"
-          placeholder="Name"
           rules="required|alpha_spaces"
-          v-model="form.name"
-        />
+          v-slot="{ field, meta }"
+        >
+          <input
+            v-bind="field"
+            type="text"
+            class="form-control"
+            :class="{ 'error-border': !meta.valid && meta.touched }"
+            id="name"
+            placeholder="Name"
+            v-model="form.name"
+          />
+        </VField>
         <VErrorMessage class="error" name="name" />
       </div>
       <div class="form-group">
         <label for="email">Email</label>
-        <VField
-          name="email"
-          type="text"
-          class="form-control"
-          id="email"
-          placeholder="Email"
-          rules="required|email"
-          v-model="form.email"
-        />
+        <VField name="email" rules="required|email" v-slot="{ field, meta }">
+          <input
+            type="text"
+            v-bind="field"
+            class="form-control"
+            :class="{ 'error-border': !meta.valid && meta.touched }"
+            id="email"
+            placeholder="Email"
+            v-model="form.email"
+          />
+        </VField>
         <VErrorMessage class="error" name="email" />
       </div>
       <div class="form-group">
         <label for="password">Password</label>
         <VField
           name="password"
-          type="password"
-          class="form-control"
-          id="password"
-          placeholder="Password"
           rules="required|min:8|max:64"
-          v-model="form.password"
-        />
-        <VErrorMessage class="error" name="password" />
+          v-slot="{ field, meta, errors }"
+        >
+          <input
+            type="password"
+            v-bind="field"
+            class="form-control"
+            :class="{ 'error-border': !meta.valid && meta.touched }"
+            id="password"
+            placeholder="Password"
+            v-model="form.password"
+          />
+          <FormError :errors="errors" />
+        </VField>
       </div>
       <div class="form-group">
         <label for="password_confirm">Confirm Password</label>
         <VField
           name="password_confirmation"
-          type="password"
-          class="form-control"
-          id="password_confirm"
-          placeholder="Confirm Password"
           rules="required|confirmed:@password"
-          v-model="form.passwordConfirmation"
-        />
+          v-slot="{ field, meta }"
+        >
+          <input
+            v-bind="field"
+            type="password"
+            class="form-control"
+            :class="{ 'error-border': !meta.valid && meta.touched }"
+            id="password_confirm"
+            placeholder="Confirm Password"
+            v-model="form.passwordConfirmation"
+          />
+        </VField>
         <VErrorMessage class="error" name="password_confirmation" />
       </div>
       <div class="form-group">
         <label for="username">Username</label>
         <VField
           name="username"
-          type="text"
-          class="form-control"
-          id="username"
-          placeholder="Username"
           rules="required|alpha_dash|min:3|max:32"
-          v-model="form.username"
-        />
+          v-slot="{ field, meta }"
+        >
+          <input
+            v-bind="field"
+            type="text"
+            class="form-control"
+            :class="{ 'error-border': !meta.valid && meta.touched }"
+            id="username"
+            placeholder="Username"
+            v-model="form.username"
+          />
+        </VField>
         <VErrorMessage class="error" name="username" />
       </div>
       <div class="form-group">
         <label for="age">Age</label>
-        <VField
-          name="age"
-          type="text"
-          class="form-control"
-          id="age"
-          rules="required|numeric"
-          placeholder="Age"
-        />
+        <VField name="age" rules="required|numeric" v-slot="{ field, meta }">
+          <input
+            type="text"
+            v-bind="field"
+            class="form-control"
+            :class="{ 'error-border': !meta.valid && meta.touched }"
+            id="age"
+            placeholder="Age"
+          />
+        </VField>
         <VErrorMessage class="error" name="age" />
       </div>
       <div class="form-group">
         <label for="address">Address</label>
         <VField
-          as="textarea"
+          rules="required|address"
           name="address"
-          class="form-control"
-          id="address"
-          placeholder="Address"
-          rules="address"
-          v-model="form.address"
-        />
+          v-slot="{ field, meta }"
+        >
+          <textarea
+            v-bind="field"
+            id="address"
+            class="form-control"
+            :class="{ 'error-border': !meta.valid && meta.touched }"
+          ></textarea>
+        </VField>
         <VErrorMessage class="error" name="address" />
       </div>
       <div class="flex flex-col space-y-2">
@@ -131,7 +164,16 @@ const handleSubmit = () => {
         </label>
         <VErrorMessage class="error" name="terms" />
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        :class="{
+          'opacity-50': meta.touched && !meta.valid,
+          'cursor-not-allowed': isSubmitting || !meta.valid,
+        }"
+      >
+        Submit
+      </button>
     </VForm>
   </div>
 </template>
@@ -139,5 +181,9 @@ const handleSubmit = () => {
 <style scoped>
 .error {
   @apply text-red-700;
+}
+
+.error-border {
+  @apply border-none ring-2 ring-red-500 focus:ring-red-600;
 }
 </style>
